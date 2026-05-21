@@ -15,7 +15,7 @@
 
 ## Affordability Index
 
-The Life affordability index is a practical Sri Lanka-local planning basket. It combines weighted food, housing, fuel, vehicle, utilities, and transport signals. Numbeo-style basket categories are useful as a methodology reference, but LifeLK should use Sri Lanka-local source data and clearly labelled assumptions.
+The Ariva affordability index is a practical Sri Lanka-local planning basket. It combines weighted food, housing, fuel, vehicle, utilities, and transport signals. Numbeo-style basket categories are useful as a methodology reference, but Ariva should use Sri Lanka-local source data and clearly labelled assumptions.
 
 ## Limits
 

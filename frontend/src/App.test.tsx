@@ -53,7 +53,7 @@ const domains: DomainSignal[] = [
 
 const overview: LifeOverviewResponse = {
   generated_at: '2026-05-21T06:10:00Z',
-  headline: 'Today in Sri Lanka: food, fuel, property, and vehicle costs in one view.',
+  headline: 'Ariva reads Sri Lanka living signals across food, fuel, property, vehicles, and daily costs.',
   freshness_note: 'Live-powered summaries with short caching.',
   domains,
   affordability: {
@@ -135,8 +135,8 @@ const lifePulse: LifePulseResponse = {
   profile: {
     id: 1,
     auth_sub: 'test-user',
-    email: 'test@lifelk.local',
-    display_name: 'LifeLK Test User',
+    email: 'test@ariva.local',
+    display_name: 'Ariva Test User',
     photo_url: null,
     default_locale: 'en',
     district: 'Colombo',
@@ -190,7 +190,7 @@ function jsonResponse(payload: unknown) {
   return Promise.resolve(new Response(JSON.stringify(payload), { headers: { 'Content-Type': 'application/json' } }))
 }
 
-describe('LifeLK Living Atlas', () => {
+describe('Ariva', () => {
   beforeEach(() => {
     window.history.replaceState({}, '', '/')
     vi.stubGlobal(
@@ -218,12 +218,13 @@ describe('LifeLK Living Atlas', () => {
   })
 
   afterEach(() => {
+    delete (globalThis as { __ARIVA_TEST_AUTH_TOKEN__?: string }).__ARIVA_TEST_AUTH_TOKEN__
     delete (globalThis as { __LIFELK_TEST_AUTH_TOKEN__?: string }).__LIFELK_TEST_AUTH_TOKEN__
     vi.unstubAllEnvs()
     vi.unstubAllGlobals()
   })
 
-  it('renders the Living Atlas home and trilingual controls', async () => {
+  it('renders the Ariva home and trilingual controls', async () => {
     render(<App />)
     expect(await screen.findByRole('heading', { name: 'Know how Sri Lanka lives, costs, and moves.' })).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: /Cost Desk/i }).length).toBeGreaterThan(0)
@@ -232,7 +233,7 @@ describe('LifeLK Living Atlas', () => {
     expect(await screen.findByRole('heading', { name: 'ශ්‍රී ලංකාව ජීවත්වන, වියදම් කරන, ගමන් කරන ආකාරය දැනගන්න.' })).toBeInTheDocument()
   })
 
-  it('searches the central Life API and opens the intelligence result surface', async () => {
+  it('searches the central Ariva API and opens the signals result surface', async () => {
     render(<App />)
     const search = await screen.findByPlaceholderText(/Search food/i)
     fireEvent.change(search, { target: { value: 'petrol' } })
@@ -246,7 +247,7 @@ describe('LifeLK Living Atlas', () => {
   })
 
   it('renders logged-in My Ariva Pulse and account actions with test auth', async () => {
-    ;(globalThis as { __LIFELK_TEST_AUTH_TOKEN__?: string }).__LIFELK_TEST_AUTH_TOKEN__ = 'life-test-token'
+    ;(globalThis as { __ARIVA_TEST_AUTH_TOKEN__?: string }).__ARIVA_TEST_AUTH_TOKEN__ = 'life-test-token'
     render(<App />)
 
     expect(await screen.findByRole('heading', { name: 'My Ariva Pulse' })).toBeInTheDocument()

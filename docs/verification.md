@@ -43,12 +43,12 @@ npm run dev
 
 Smoke checks:
 
-- Dashboard renders Today in Sri Lanka.
+- Dashboard renders Ariva and Sri Lanka Living Intelligence.
 - Four domains appear: Food, Fuel, Property, Vehicle.
 - Search finds a fuel or food signal.
 - Sources page shows upstream health and limitations.
 - With `VITE_FIREBASE_*` configured, sign-in appears; without it, public pages render and account controls stay hidden.
-- With `VITE_LIFE_TEST_AUTH_TOKEN`, My Life Pulse renders saved profile, watches, alert rules, and notifications in tests.
+- With `VITE_LIFE_TEST_AUTH_TOKEN`, My Ariva Pulse renders saved profile, watches, alert rules, and notifications in tests.
 - Compare and affordability views do not overflow on mobile widths.
 
 Playwright smoke after backend and frontend are running:

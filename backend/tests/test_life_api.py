@@ -2,7 +2,7 @@ def test_life_overview_returns_all_domains(client):
     response = client.get("/api/v1/life/overview")
     assert response.status_code == 200
     payload = response.json()
-    assert payload["headline"].startswith("Today in Sri Lanka")
+    assert payload["headline"].startswith("Ariva reads Sri Lanka")
     assert {domain["key"] for domain in payload["domains"]} == {
         "food",
         "fuel",
