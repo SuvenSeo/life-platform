@@ -3,7 +3,7 @@ import { AlertTriangle, CheckCircle2, DatabaseZap, ExternalLink } from 'lucide-r
 
 import { AtlasPanel } from '../components/AtlasPanel'
 import { SourcePill } from '../components/SourcePill'
-import { BackgroundBeams, Spotlight } from '../components/ui/AceternityPrimitives'
+import { BackgroundBeams, BorderBeam, Spotlight } from '../components/ui/AceternityPrimitives'
 import { domainLabel, sourceTypeLabel, statusLabel, t } from '../i18n'
 import { getPipeline } from '../lib/api'
 import { domainMeta, formatDate, sourceTypeTone, statusTone } from '../lib/format'
@@ -30,6 +30,7 @@ export function SourcesPage({ domains, locale }: { domains: DomainSignal[]; loca
       <AtlasPanel className="bg-ink text-paper">
         <BackgroundBeams />
         <Spotlight />
+        <BorderBeam colorFrom="#d5aa41" colorTo="#225e45" duration={8} />
         <div className="grid gap-5 lg:grid-cols-[1fr_16rem]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold">{t(locale, 'sourceRegistry')}</p>

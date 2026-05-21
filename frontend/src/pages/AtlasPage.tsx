@@ -4,7 +4,7 @@ import { PolarAngleAxis, PolarGrid, Radar as RadarShape, RadarChart, ResponsiveC
 
 import { AtlasPanel } from '../components/AtlasPanel'
 import { SourcePill } from '../components/SourcePill'
-import { BackgroundBeams, SignalMap, Spotlight } from '../components/ui/AceternityPrimitives'
+import { BackgroundBeams, BorderBeam, SignalMap, Spotlight } from '../components/ui/AceternityPrimitives'
 import { profileLabel, t } from '../i18n'
 import { districts, profiles } from '../lib/format'
 import type { AtlasResponse, LocaleCode, Profile } from '../types'
@@ -33,6 +33,7 @@ export function AtlasPage({
         <AtlasPanel className="relative overflow-hidden bg-ink text-paper">
           <BackgroundBeams />
           <Spotlight />
+          <BorderBeam colorFrom="#d5aa41" colorTo="#225e45" duration={9} />
           <SignalMap className="absolute -bottom-16 right-0 w-64 opacity-20" />
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold">{t(locale, 'atlas')}</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-normal">{selected?.district ?? district}</h1>

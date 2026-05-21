@@ -5,7 +5,7 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { BrandMark } from '../components/BrandMark'
 import { MetricTile } from '../components/MetricTile'
 import { SourcePill } from '../components/SourcePill'
-import { BackgroundBeams, BentoCard, BentoGrid, DataRail, MovingBorderButton, ShimmerText, SignalMap, Spotlight } from '../components/ui/AceternityPrimitives'
+import { BackgroundBeams, BentoCard, BentoGrid, BorderBeam, DataRail, MetricDeck, ShimmerButton, ShimmerText, SignalMap, Spotlight } from '../components/ui/AceternityPrimitives'
 import { domainLabel, profileLabel, statusLabel, t } from '../i18n'
 import { districts, formatDate, formatLkrLocale, profiles, severityTone } from '../lib/format'
 import type { AtlasResponse, CostCommandResponse, LifeOverviewResponse, LifePulseResponse, LocaleCode, PageKey, Profile, UtilitiesResponse } from '../types'
@@ -75,6 +75,7 @@ export function HomePage({
       <section className="hero-section">
         <BackgroundBeams />
         <Spotlight />
+        <BorderBeam colorFrom="#d5aa41" colorTo="#225e45" duration={9} />
         <div className="relative grid gap-6 p-4 md:p-6 xl:grid-cols-[1.02fr_0.98fr]">
           <div className="flex min-h-[34rem] flex-col justify-between gap-8">
             <div>
@@ -92,10 +93,10 @@ export function HomePage({
                 {t(locale, 'platformPromise')}
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <MovingBorderButton className="min-w-[13rem]" onClick={() => setActivePage('cost')}>
+                <ShimmerButton className="min-w-[13rem]" onClick={() => setActivePage('cost')}>
                   {t(locale, 'costCommand')}
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </MovingBorderButton>
+                </ShimmerButton>
                 <button
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 text-sm font-extrabold text-paper hover:bg-white/15"
                   onClick={() => setActivePage('sources')}
@@ -134,6 +135,7 @@ export function HomePage({
           </div>
 
           <div className="hero-console p-3 md:p-4">
+            <BorderBeam colorFrom="#d5aa41" colorTo="#255378" duration={10} reverse />
             <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-gold"><ShimmerText>{t(locale, 'nationalPulse')}</ShimmerText></p>
@@ -176,7 +178,7 @@ export function HomePage({
 
       {lifePulse ? (
         <BentoGrid>
-          <BentoCard className="md:col-span-5 xl:col-span-5">
+          <BentoCard beam className="md:col-span-5 xl:col-span-5" tone="leaf">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="atlas-label">Optional account</p>
@@ -195,22 +197,14 @@ export function HomePage({
                 {saveProfilePending ? 'Saving' : 'Save filters'}
               </button>
             </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              {[
-                { icon: Bookmark, label: 'Saved watches', value: lifePulse.saved_items.length, color: 'text-steel' },
-                { icon: ShieldCheck, label: 'Active rules', value: lifePulse.alert_rules.length, color: 'text-leaf' },
-                { icon: Bell, label: 'Unread', value: lifePulse.unread_count, color: 'text-chili' },
-              ].map((item) => {
-                const Icon = item.icon
-                return (
-                  <div key={item.label} className="rounded-lg border border-line bg-white/65 p-3">
-                    <Icon className={`h-4 w-4 ${item.color}`} aria-hidden="true" />
-                    <p className="mt-2 text-2xl font-bold text-ink">{item.value}</p>
-                    <p className="text-sm text-muted">{item.label}</p>
-                  </div>
-                )
-              })}
-            </div>
+            <MetricDeck
+              className="mt-5"
+              items={[
+                { icon: Bookmark, label: 'Saved watches', tone: 'steel', trend: 'up', trendLabel: 'Private pulse', value: lifePulse.saved_items.length },
+                { icon: ShieldCheck, label: 'Active rules', tone: 'leaf', trend: 'up', trendLabel: 'Watching signals', value: lifePulse.alert_rules.length },
+                { icon: Bell, label: 'Unread', tone: 'chili', trend: lifePulse.unread_count ? 'up' : 'flat', trendLabel: 'Needs attention', value: lifePulse.unread_count },
+              ]}
+            />
             <div className="mt-4 grid gap-3 lg:grid-cols-2">
               <div className="rounded-lg border border-line bg-white/65 p-3">
                 <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-muted">Watchlist</p>
@@ -233,7 +227,7 @@ export function HomePage({
             </div>
           </BentoCard>
 
-          <BentoCard className="md:col-span-7 xl:col-span-7">
+          <BentoCard beam className="md:col-span-7 xl:col-span-7" tone="steel">
             <p className="atlas-label">Consolidated notifications</p>
             <div className="mt-4 grid gap-3 lg:grid-cols-2">
               {lifePulse.notifications.length ? (
@@ -259,7 +253,7 @@ export function HomePage({
       ) : null}
 
       <BentoGrid>
-        <BentoCard className="md:col-span-8 xl:col-span-8">
+        <BentoCard beam className="md:col-span-8 xl:col-span-8" tone="leaf">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="atlas-label">{t(locale, 'nationalPulse')}</p>
@@ -280,7 +274,7 @@ export function HomePage({
           </div>
         </BentoCard>
 
-        <BentoCard dark className="md:col-span-4 xl:col-span-4">
+        <BentoCard beam dark className="md:col-span-4 xl:col-span-4" tone="gold">
           <p className="atlas-label">{t(locale, 'essentialsKicker')}</p>
           <h2 className="mt-1 text-2xl font-bold text-paper">{t(locale, 'essentialsTitle')}</h2>
           <div className="mt-5 grid gap-3">
@@ -305,7 +299,7 @@ export function HomePage({
           </div>
         </BentoCard>
 
-        <BentoCard className="md:col-span-5 xl:col-span-5">
+        <BentoCard beam className="md:col-span-5 xl:col-span-5" tone="chili">
           <p className="atlas-label">{t(locale, 'publicIntelligence')}</p>
           <h2 className="mt-1 text-2xl font-bold text-ink">{t(locale, 'signalsToWatch')}</h2>
           <div className="mt-5 space-y-2">
@@ -321,7 +315,7 @@ export function HomePage({
           </div>
         </BentoCard>
 
-        <BentoCard className="md:col-span-7 xl:col-span-7">
+        <BentoCard beam className="md:col-span-7 xl:col-span-7" tone="steel">
           <p className="atlas-label">{t(locale, 'sourceClassified')}</p>
           <h2 className="mt-1 text-2xl font-bold text-ink">{t(locale, 'liveSources')}</h2>
           <div className="mt-5 flex flex-wrap gap-2">

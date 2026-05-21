@@ -3,7 +3,7 @@ import type { Dispatch, SetStateAction } from 'react'
 
 import { AtlasPanel } from '../components/AtlasPanel'
 import { SourcePill } from '../components/SourcePill'
-import { BackgroundBeams, Spotlight } from '../components/ui/AceternityPrimitives'
+import { BackgroundBeams, BorderBeam, IconInput, Spotlight } from '../components/ui/AceternityPrimitives'
 import { domainLabel, statusLabel, t } from '../i18n'
 import { domainMeta, formatLkrLocale, severityTone } from '../lib/format'
 import type { DomainSignal, InsightsResponse, LocaleCode, RetailOffersResponse } from '../types'
@@ -35,6 +35,7 @@ export function IntelligencePage({
         <AtlasPanel className="bg-ink text-paper">
           <BackgroundBeams />
           <Spotlight />
+          <BorderBeam colorFrom="#d5aa41" colorTo="#255378" duration={8} />
           <div className="flex items-center gap-2">
             <Brain className="h-6 w-6 text-gold" aria-hidden="true" />
             <h1 className="text-3xl font-semibold tracking-normal">{t(locale, 'intelligence')}</h1>
@@ -42,13 +43,14 @@ export function IntelligencePage({
           <p className="mt-3 text-sm leading-6 text-paper/72">
             {t(locale, 'intelligenceIntro')}
           </p>
-          <div className="relative mt-6">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-paper/55" aria-hidden="true" />
-            <input
-              className="h-11 w-full rounded-lg border border-white/15 bg-white/10 pl-9 pr-3 text-sm text-paper outline-none placeholder:text-paper/45"
+          <div className="mt-6">
+            <IconInput
+              className="[&_.icon-input__field]:h-11"
+              icon={Search}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder={t(locale, 'search')}
               value={searchQuery}
+              label={t(locale, 'search')}
             />
           </div>
         </AtlasPanel>

@@ -6,6 +6,7 @@ import { localeOptions, t } from '../i18n'
 import type { PageKey, SearchResult } from '../types'
 import type { LocaleCode } from '../types'
 import { BrandMark } from './BrandMark'
+import { FloatingSurface, IconInput } from './ui/AceternityPrimitives'
 
 const navItems = [
   { key: 'home', labelKey: 'today', icon: LayoutDashboard },
@@ -50,7 +51,7 @@ export function Shell({
     <div className="min-h-screen overflow-hidden">
       <header className="floating-shell">
         <div className="mx-auto w-full max-w-[1480px] px-3 py-3 lg:px-6">
-          <div className="floating-shell-inner flex flex-col gap-3 px-3 py-3 lg:flex-row lg:items-center">
+          <FloatingSurface className="flex flex-col gap-3 px-3 py-3 lg:flex-row lg:items-center">
           <button className="flex items-center gap-3 text-left" onClick={() => setActivePage('home')} type="button">
             <BrandMark compact />
             <span>
@@ -79,13 +80,13 @@ export function Shell({
 
           <div className="grid gap-2 lg:w-[36rem] lg:grid-cols-[1fr_auto_auto]">
             <div className="relative min-w-0">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-paper/55" aria-hidden="true" />
-              <input
-                className="shell-input pl-9 pr-3 text-sm ring-gold/20 transition focus:border-gold focus:ring-4"
+              <IconInput
+                icon={Search}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder={t(locale, 'search')}
                 type="search"
                 value={searchQuery}
+                label={t(locale, 'search')}
               />
               {searchQuery.trim().length > 1 && searchResults.length > 0 ? (
                 <div className="absolute right-0 top-12 z-40 w-full rounded-lg border border-gold/20 bg-paper p-2 text-ink shadow-[0_26px_80px_-45px_rgba(0,0,0,.8)]">
@@ -146,7 +147,7 @@ export function Shell({
               )
             ) : null}
           </div>
-          </div>
+          </FloatingSurface>
         </div>
       </header>
 
