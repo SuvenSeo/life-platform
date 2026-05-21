@@ -48,7 +48,7 @@ const domains: DomainSignal[] = [
   domain('transport', 'Public Transport', 650),
   domain('retail', 'Retail Offers', 320),
   domain('indices', 'Official Indices', 5.4),
-  domain('areas', 'Area Life Scores', 68),
+  domain('areas', 'District Life Scores', 68),
 ]
 
 const overview: LifeOverviewResponse = {

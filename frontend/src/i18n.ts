@@ -244,7 +244,7 @@ const sourceTypeLabels: Record<LocaleCode, Record<SourceType, string>> = {
 
 const domainLabels: Record<LocaleCode, Record<DomainKey, string>> = {
   en: {
-    areas: 'Area Life Scores',
+    areas: 'District Life Scores',
     food: 'Food and Grocery',
     fuel: 'Fuel',
     gas: 'LPG Gas',

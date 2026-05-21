@@ -28,7 +28,7 @@ export function AffordabilityPage() {
         <div className="rounded-lg border border-ink bg-ink p-5 text-paper shadow-panel">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-paper/65">Life affordability index</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-paper/65">Ariva affordability index</p>
               <h1 className="mt-2 text-3xl font-semibold tracking-normal md:text-4xl">{data ? formatLkr(data.total_monthly_lkr) : 'Loading'}</h1>
               <p className="mt-3 text-sm leading-6 text-paper/72">
                 {data ? `${data.district}, ${data.profile} profile, ${data.confidence} confidence.` : 'Calculating current household basket.'}

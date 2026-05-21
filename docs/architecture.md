@@ -14,7 +14,7 @@ Hybrid accounts are optional. The public atlas, search, source registry, and aff
 
 ## Backend Flow
 
-1. A public Life API request enters `/api/v1/life/*`.
+1. A public Ariva API request enters `/api/v1/life/*`.
 2. `LifeService` asks each domain adapter for a normalized `DomainSignal`.
 3. Each adapter calls its upstream API with a timeout and returns a degraded fallback signal if the upstream is unavailable.
 4. The service records an `integration_runs` row for each adapter call.

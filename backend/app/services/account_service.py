@@ -216,7 +216,7 @@ class AccountService:
             if domain.status != "healthy":
                 return {
                     "title": f"{domain.label} source needs attention",
-                    "message": f"{domain.label} is {domain.status}; LifeLK is still showing labelled fallback or degraded data.",
+                    "message": f"{domain.label} is {domain.status}; Ariva is still showing labelled fallback or degraded data.",
                     "severity": "watch" if domain.status == "degraded" else "risk",
                     "value": domain.status,
                 }

@@ -32,8 +32,8 @@ def _test_user(token: str) -> AuthenticatedUser | None:
         return None
     return AuthenticatedUser(
         auth_sub=settings.life_test_auth_sub,
-        email="test@lifelk.local",
-        display_name="LifeLK Test User",
+        email="test@ariva.local",
+        display_name="Ariva Test User",
     )
 
 

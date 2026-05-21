@@ -13,7 +13,7 @@ class StaticSignalAdapter(DomainAdapter):
     @property
     def api_base(self) -> str:
         refs = source_refs(self.source_domain)
-        return refs[0].url if refs else "https://lifelk.local"
+        return refs[0].url if refs else "https://ariva.local"
 
     async def fetch(self, client: httpx.AsyncClient) -> DomainSignal:
         return self.fixture_signal()
@@ -50,7 +50,7 @@ class UtilitiesAdapter(StaticSignalAdapter):
                 self.metric("Utility source confidence", 2, "official sources"),
             ],
             highlights=[
-                self.highlight("Electricity pressure", "Family proxy near LKR 18,500/month", "watch", "/cost-os"),
+                self.highlight("Electricity pressure", "Family proxy near LKR 18,500/month", "watch", "/?page=cost"),
                 self.highlight("Water tariff", "NWSDB reference staged", "neutral", "/sources"),
             ],
             top_items=UTILITY_TARIFFS,
@@ -88,7 +88,7 @@ class GasAdapter(StaticSignalAdapter):
                 self.metric("Tracked LPG sources", len(refs), "sources"),
             ],
             highlights=[
-                self.highlight("Cooking energy", "12.5kg cylinder tracked as a household cost input", "neutral", "/cost-os"),
+                self.highlight("Cooking energy", "12.5kg cylinder tracked as a household cost input", "neutral", "/?page=cost"),
                 self.highlight("Source confidence", "Medium until automated vendor extraction is live", "watch", "/sources"),
             ],
             top_items=GAS_TARIFFS,
@@ -126,7 +126,7 @@ class TransportAdapter(StaticSignalAdapter):
                 self.metric("Tracked corridors", len(TRANSPORT_OPTIONS), "routes"),
             ],
             highlights=[
-                self.highlight("Commuter corridor", "Gampaha to Colombo route estimate available", "good", "/atlas"),
+                self.highlight("Commuter corridor", "Gampaha to Colombo route estimate available", "good", "/?page=atlas"),
                 self.highlight("Private vehicle contrast", "Fuel-only route estimates included separately", "neutral", "/transport"),
             ],
             top_items=TRANSPORT_OPTIONS,
@@ -158,14 +158,14 @@ class RetailAdapter(StaticSignalAdapter):
             homepage_url=self.homepage_url,
             last_updated_at=now,
             observed_at=now,
-            freshness_note="Retail pages can change or block access; LifeLK labels these as medium-confidence retail quotes.",
+            freshness_note="Retail pages can change or block access; Ariva labels these as medium-confidence retail quotes.",
             metrics=[
                 self.metric("Tracked retail quotes", len(RETAIL_OFFERS), "offers"),
                 self.metric("Lowest sample item", cheapest["price_lkr"], f"LKR/{cheapest['unit']}"),
             ],
             highlights=[
                 self.highlight("Retail blend", "Supermarket quotes are visible but not treated as official prices", "watch", "/sources"),
-                self.highlight("Substitution signal", "Compare retail and market prices before buying", "good", "/intelligence"),
+                self.highlight("Substitution signal", "Compare retail and market prices before buying", "good", "/?page=intelligence"),
             ],
             top_items=RETAIL_OFFERS,
             sources=refs,
@@ -202,8 +202,8 @@ class IndicesAdapter(StaticSignalAdapter):
                 self.metric("HIES non-food share", 64.9, "% household spend"),
             ],
             highlights=[
-                self.highlight("Inflation context", "Colombo urban inflation reported at 5.4% in April 2026", "watch", "/intelligence"),
-                self.highlight("Non-food pressure", "Housing, utilities, health, transport, and education dominate the wider basket", "neutral", "/cost-os"),
+                self.highlight("Inflation context", "Colombo urban inflation reported at 5.4% in April 2026", "watch", "/?page=intelligence"),
+                self.highlight("Non-food pressure", "Housing, utilities, health, transport, and education dominate the wider basket", "neutral", "/?page=cost"),
             ],
             top_items=[
                 {"label": "Food share", "value": 35.1, "unit": "%"},
@@ -217,7 +217,7 @@ class IndicesAdapter(StaticSignalAdapter):
 
 class AreaScoreAdapter(StaticSignalAdapter):
     key = "areas"
-    label = "Area Life Scores"
+    label = "District Life Scores"
     category = "District affordability and livability"
     homepage_url = "https://www.statistics.gov.lk/IncomeAndExpenditure/StaticalInformation/HouseholdIncomeandExpenditureSurvey"
     source_domain = "areas"
@@ -237,13 +237,13 @@ class AreaScoreAdapter(StaticSignalAdapter):
             homepage_url=self.homepage_url,
             last_updated_at=now,
             observed_at=now,
-            freshness_note="Derived LifeLK score; inputs are labelled and weighted for public planning, not formal statistics.",
+            freshness_note="Derived Ariva score; inputs are labelled and weighted for public planning, not formal statistics.",
             metrics=[
                 self.metric("Districts scored", 8, "districts"),
                 self.metric("Score components", 5, "signals"),
             ],
             highlights=[
-                self.highlight("Atlas mode", "District heat panels ready for public comparison", "good", "/atlas"),
+                self.highlight("Atlas mode", "District heat panels ready for public comparison", "good", "/?page=atlas"),
                 self.highlight("Derived score", "Methodology is transparent and source-labelled", "neutral", "/sources"),
             ],
             top_items=[

@@ -150,7 +150,7 @@ function AppContent() {
       if (!domain) throw new Error('Domain not loaded')
       return createSavedItem(token, {
         domain_key: domain.key,
-        href: '/intelligence',
+        href: '/?page=intelligence',
         label: domain.label,
         payload: { health_score: domain.health_score, status: domain.status, summary: domain.summary },
         query: searchQuery.trim() || domain.label,

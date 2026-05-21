@@ -1,1 +1,1 @@
-"""Sri Lanka Life Platform backend."""
+"""Ariva backend."""

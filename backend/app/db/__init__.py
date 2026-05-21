@@ -1,1 +1,1 @@
-"""Database setup for Life Platform."""
+"""Database setup for Ariva."""

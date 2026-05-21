@@ -73,8 +73,8 @@ export const domainMeta: Record<
     accent: '#334c91',
     bg: 'bg-indigo-50',
     icon: Gauge,
-    label: 'Area Life Scores',
-    short: 'Areas',
+    label: 'District Life Scores',
+    short: 'Districts',
   },
 }
 

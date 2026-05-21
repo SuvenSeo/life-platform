@@ -5,6 +5,7 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 import { AtlasPanel } from '../components/AtlasPanel'
 import { MetricTile } from '../components/MetricTile'
 import { SourcePill } from '../components/SourcePill'
+import { BackgroundBeams, Spotlight } from '../components/ui/AceternityPrimitives'
 import { profileLabel, sourceTypeLabel, t } from '../i18n'
 import { districts, formatLkrLocale, profiles, sourceTypeTone } from '../lib/format'
 import type { CostCommandResponse, LocaleCode, Profile, TransportResponse, UtilitiesResponse } from '../types'
@@ -42,6 +43,8 @@ export function CostOSPage({
     <div className="space-y-5">
       <section className="grid gap-5 xl:grid-cols-[0.78fr_1.22fr]">
         <AtlasPanel className="bg-ink text-paper">
+          <BackgroundBeams />
+          <Spotlight />
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold">{t(locale, 'costCommand')}</p>
           <h1 className="mt-3 text-4xl font-semibold leading-tight tracking-normal">{formatLkrLocale(costCommand?.total_monthly_lkr, localeTag(locale))}</h1>
           <p className="mt-3 text-sm leading-6 text-paper/72">

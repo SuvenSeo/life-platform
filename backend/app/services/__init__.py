@@ -1,1 +1,1 @@
-"""Life Platform service layer."""
+"""Ariva service layer."""

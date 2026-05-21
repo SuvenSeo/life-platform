@@ -4,6 +4,7 @@ import { PolarAngleAxis, PolarGrid, Radar as RadarShape, RadarChart, ResponsiveC
 
 import { AtlasPanel } from '../components/AtlasPanel'
 import { SourcePill } from '../components/SourcePill'
+import { BackgroundBeams, SignalMap, Spotlight } from '../components/ui/AceternityPrimitives'
 import { profileLabel, t } from '../i18n'
 import { districts, profiles } from '../lib/format'
 import type { AtlasResponse, LocaleCode, Profile } from '../types'
@@ -30,7 +31,9 @@ export function AtlasPage({
     <div className="space-y-5">
       <section className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
         <AtlasPanel className="relative overflow-hidden bg-ink text-paper">
-          <div className="atlas-mini-map" aria-hidden="true" />
+          <BackgroundBeams />
+          <Spotlight />
+          <SignalMap className="absolute -bottom-16 right-0 w-64 opacity-20" />
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold">{t(locale, 'atlas')}</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-normal">{selected?.district ?? district}</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-paper/72">{atlas?.narrative ?? t(locale, 'districtScoreFallback')}</p>
@@ -55,11 +58,11 @@ export function AtlasPage({
             </label>
           </div>
           <div className="mt-8 grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-white/15 bg-white/8 p-4">
+            <div className="rounded-lg border border-white/15 bg-white/10 p-4">
               <p className="text-xs uppercase tracking-[0.14em] text-paper/55">{t(locale, 'lifeScore')}</p>
               <p className="mt-2 text-4xl font-semibold">{selected?.score ?? 0}</p>
             </div>
-            <div className="rounded-lg border border-white/15 bg-white/8 p-4">
+            <div className="rounded-lg border border-white/15 bg-white/10 p-4">
               <p className="text-xs uppercase tracking-[0.14em] text-paper/55">{t(locale, 'grade')}</p>
               <p className="mt-2 text-4xl font-semibold">{selected?.grade ?? 'N/A'}</p>
             </div>

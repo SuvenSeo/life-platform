@@ -70,7 +70,7 @@ class FuelAdapter(DomainAdapter):
             homepage_url=self.homepage_url,
             last_updated_at=now,
             observed_at=now,
-            freshness_note="Fuel fixture values keep the Life dashboard usable offline." if error is None else "Fallback fuel fixture.",
+            freshness_note="Fuel fixture values keep Ariva usable offline." if error is None else "Fallback fuel fixture.",
             metrics=[
                 self.metric("Petrol 92", 410, "LKR/L"),
                 self.metric("Auto Diesel", 392, "LKR/L"),

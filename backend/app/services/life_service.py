@@ -738,9 +738,9 @@ class LifeService:
             daily_lkr=round(total / 30.4, 0),
             items=items,
             savings_moves=[
-                DomainHighlight(label="Swap retail vs market", value="Compare supermarket quotes with FoodLK market quotes before basket buys.", severity="good", href="/intelligence"),
-                DomainHighlight(label="Commute mode check", value="Compare NTC bus fares with private fuel-only trip costs.", severity="watch", href="/atlas"),
-                DomainHighlight(label="Gas cadence", value="Track LPG cylinder replacement as a monthly reserve, not a surprise expense.", severity="neutral", href="/cost-os"),
+                DomainHighlight(label="Swap retail vs market", value="Compare supermarket quotes with FoodLK market quotes before basket buys.", severity="good", href="/?page=intelligence"),
+                DomainHighlight(label="Commute mode check", value="Compare NTC bus fares with private fuel-only trip costs.", severity="watch", href="/?page=atlas"),
+                DomainHighlight(label="Gas cadence", value="Track LPG cylinder replacement as a monthly reserve, not a surprise expense.", severity="neutral", href="/?page=cost"),
             ],
             sources=self.public_sources(),
             assumptions=[

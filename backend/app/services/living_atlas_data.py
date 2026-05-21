@@ -130,7 +130,7 @@ SOURCE_DEFINITIONS = [
 
 UTILITY_TARIFFS = [
     {"key": "electricity-low", "label": "Electricity low-use block", "amount_lkr": 7200, "unit": "monthly planning estimate", "source_key": "pucsl-electricity", "confidence": "medium", "note": "Planning estimate until block-level PUCSL extraction is automated."},
-    {"key": "electricity-family", "label": "Electricity family block", "amount_lkr": 18500, "unit": "monthly planning estimate", "source_key": "pucsl-electricity", "confidence": "medium", "note": "Uses a family-consumption proxy for the Cost OS."},
+    {"key": "electricity-family", "label": "Electricity family block", "amount_lkr": 18500, "unit": "monthly planning estimate", "source_key": "pucsl-electricity", "confidence": "medium", "note": "Uses a family-consumption proxy for the Cost Desk."},
     {"key": "water-domestic", "label": "Domestic water", "amount_lkr": 2600, "unit": "monthly planning estimate", "source_key": "nwsdb-water", "confidence": "low", "note": "Static v2 assumption until tariff slabs are normalized."},
 ]
 
@@ -221,7 +221,7 @@ DOMAIN_TRANSLATIONS = {
         "transport": "Public transport",
         "retail": "Retail offers",
         "indices": "Official indices",
-        "areas": "Area life scores",
+        "areas": "District life scores",
     },
     "si": {
         "food": "ආහාර හා සිල්ලර",
