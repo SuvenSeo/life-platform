@@ -1,0 +1,1 @@
+"""Life Platform service layer."""

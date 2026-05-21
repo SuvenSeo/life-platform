@@ -1,0 +1,28 @@
+app = "life-platform-backend"
+primary_region = "sin"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  APP_ENV = "production"
+  API_PREFIX = "/api/v1"
+  LIFE_CACHE_SECONDS = "180"
+  UPSTREAM_TIMEOUT_SECONDS = "8"
+  FOOD_API_BASE = "https://food-platform-backend.fly.dev/api/v1"
+  FUEL_API_BASE = "https://octane-api.fly.dev"
+  PROPERTY_API_BASE = "https://property-price-intelligence-an-ardeno-production.fly.dev"
+  VEHICLE_API_BASE = "https://vehicle-platform-backend.fly.dev/api/v1"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
