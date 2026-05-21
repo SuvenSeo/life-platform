@@ -1,6 +1,6 @@
 # Architecture
 
-LifeLK is a public-first Sri Lanka living-intelligence product. It does not copy scraper code from the existing domain platforms in v1. FoodLK, Octane, PropertyLK, and AutoLens remain the source-of-truth systems, while LifeLK adapts their public APIs into one national dashboard and central warehouse.
+Ariva is a public-first Sri Lanka living-intelligence product. It does not copy scraper code from the existing domain platforms in v1. FoodLK, Octane, PropertyLK, and AutoLens remain the source-of-truth systems, while Ariva adapts their public APIs into one national signal desk and central warehouse.
 
 Hybrid accounts are optional. The public atlas, search, source registry, and affordability views continue to work without login. Firebase Auth only unlocks saved profile preferences, watchlists, alert rules, and in-app notifications.
 
