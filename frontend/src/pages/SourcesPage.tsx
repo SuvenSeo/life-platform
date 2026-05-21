@@ -27,7 +27,7 @@ export function SourcesPage({ domains, locale }: { domains: DomainSignal[]; loca
   return (
     <div className="space-y-5">
       <AtlasPanel className="bg-ink text-paper">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="grid gap-5 lg:grid-cols-[1fr_16rem]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold">{t(locale, 'sourceRegistry')}</p>
             <h1 className="mt-1 text-3xl font-semibold tracking-normal">{t(locale, 'sources')}</h1>
@@ -35,10 +35,12 @@ export function SourcesPage({ domains, locale }: { domains: DomainSignal[]; loca
               {t(locale, 'sourceRegistryIntro')}
             </p>
           </div>
-          <span className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold ${data ? statusTone(data.overall_status) : 'border-white/20 bg-white/10 text-paper/70'}`}>
-            <DatabaseZap className="h-4 w-4" aria-hidden="true" />
-            {data ? statusLabel(locale, data.overall_status) : statusLabel(locale, 'loading')}
-          </span>
+          <div className="source-network border border-white/15 bg-white/8">
+            <span className={`relative z-10 m-3 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold ${data ? statusTone(data.overall_status) : 'border-white/20 bg-white/10 text-paper/70'}`}>
+              <DatabaseZap className="h-4 w-4" aria-hidden="true" />
+              {data ? statusLabel(locale, data.overall_status) : statusLabel(locale, 'loading')}
+            </span>
+          </div>
         </div>
       </AtlasPanel>
 

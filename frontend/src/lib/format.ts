@@ -7,28 +7,28 @@ export const domainMeta: Record<
   { accent: string; bg: string; icon: LucideIcon; label: string; short: string }
 > = {
   food: {
-    accent: '#c53a25',
+    accent: '#912a20',
     bg: 'bg-red-50',
     icon: ShoppingBasket,
     label: 'Food and Grocery',
     short: 'Food',
   },
   fuel: {
-    accent: '#315f7d',
+    accent: '#255378',
     bg: 'bg-sky-50',
     icon: Fuel,
     label: 'Fuel',
     short: 'Fuel',
   },
   property: {
-    accent: '#2f6a4f',
+    accent: '#225e45',
     bg: 'bg-emerald-50',
     icon: Home,
     label: 'Property and Rent',
     short: 'Property',
   },
   vehicle: {
-    accent: '#c89321',
+    accent: '#d5aa41',
     bg: 'bg-amber-50',
     icon: Car,
     label: 'Vehicle Market',
@@ -42,7 +42,7 @@ export const domainMeta: Record<
     short: 'Utilities',
   },
   gas: {
-    accent: '#b6541d',
+    accent: '#c97835',
     bg: 'bg-orange-50',
     icon: Flame,
     label: 'LPG Gas',
@@ -63,7 +63,7 @@ export const domainMeta: Record<
     short: 'Retail',
   },
   indices: {
-    accent: '#6d5a2b',
+    accent: '#8a6821',
     bg: 'bg-yellow-50',
     icon: Landmark,
     label: 'Official Indices',

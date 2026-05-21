@@ -47,6 +47,7 @@ export function CostOSPage({
           <p className="mt-3 text-sm leading-6 text-paper/72">
             {district} / {profileLabel(locale, profile)}. {t(locale, 'publicBudgetEstimate')}
           </p>
+          <div className="mt-5 signal-ribbon opacity-90" aria-hidden="true" />
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <label className="atlas-control light">
               {t(locale, 'district')}

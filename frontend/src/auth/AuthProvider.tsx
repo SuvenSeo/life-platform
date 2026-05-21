@@ -16,8 +16,8 @@ function publicUser(user: FirebaseUser): LifeAuthUser {
 function testUser(): LifeAuthUser {
   return {
     uid: 'test-user',
-    email: 'test@lifelk.local',
-    displayName: 'LifeLK Test User',
+    email: 'test@ariva.local',
+    displayName: 'Ariva Test User',
     photoURL: null,
   }
 }

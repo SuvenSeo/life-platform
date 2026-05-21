@@ -1,12 +1,12 @@
-# Sri Lanka Life Platform
+# Ariva
 
-One public-first Life Platform for Sri Lanka, powered by the existing Ardeno Studio price-intelligence domains:
+Ariva is Sri Lanka Living Intelligence: one public-first signal desk for daily costs, places, mobility, and market context, powered by the existing Ardeno Studio price-intelligence domains:
 FoodLK, Octane, PropertyLK, and AutoLens.
 
 ## Shape
 
 - `backend/` - FastAPI API, domain adapters, central snapshot schema, affordability engine.
-- `frontend/` - Vite React dashboard for the public Life Platform UI.
+- `frontend/` - Vite React dashboard for the public Ariva UI.
 - `.github/workflows/` - CI and snapshot refresh automation.
 
 ## Backend
@@ -64,7 +64,7 @@ Set the `VITE_FIREBASE_*` values from the Firebase web app config to show the op
 - Backend: Fly app from `backend/fly.toml`; run Alembic migrations before the Uvicorn server starts.
 - Frontend: Vercel Vite build from `frontend/vercel.json`; set `VITE_API_URL` to the deployed backend `/api/v1` base.
 - CI: `.github/workflows/ci.yml` runs backend tests, frontend lint, frontend tests, and frontend build.
-- Snapshot refresh: `.github/workflows/snapshot-refresh.yml` can call the deployed Life API when `LIFE_API_BASE` is configured as a repository secret.
+- Snapshot refresh: `.github/workflows/snapshot-refresh.yml` can call the deployed Ariva API when `LIFE_API_BASE` is configured as a repository secret.
 
 ## Public API
 
@@ -83,7 +83,7 @@ Set the `VITE_FIREBASE_*` values from the Firebase web app config to show the op
 
 ## Data Truth
 
-The Life Platform is live-powered, not fake streaming. It calls the upstream domain APIs with short caching, records integration runs, and stores normalized domain snapshots for central history. If an upstream is unavailable, the API returns a degraded domain state with fixture-backed structure instead of breaking the dashboard. Personal account data never overrides source labels, confidence, or freshness notes.
+Ariva is live-powered, not fake streaming. It calls the upstream domain APIs with short caching, records integration runs, and stores normalized domain snapshots for central history. If an upstream is unavailable, the API returns a degraded domain state with fixture-backed structure instead of breaking the dashboard. Personal account data never overrides source labels, confidence, or freshness notes.
 
 ## Docs
 

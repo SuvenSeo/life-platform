@@ -36,7 +36,7 @@ async function request<T>(
   if (init.body && !requestHeaders.has('Content-Type')) requestHeaders.set('Content-Type', 'application/json')
   const response = await fetch(`${API_BASE}${path}`, { ...init, headers: requestHeaders })
   if (!response.ok) {
-    throw new Error(`Life API ${response.status}: ${response.statusText}`)
+    throw new Error(`Ariva API ${response.status}: ${response.statusText}`)
   }
   if (response.status === 204) return undefined as T
   return response.json() as Promise<T>

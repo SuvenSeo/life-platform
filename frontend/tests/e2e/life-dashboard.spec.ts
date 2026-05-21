@@ -27,15 +27,15 @@ test('sources and trilingual UI render without horizontal overflow', async ({ pa
   expect(await hasHorizontalOverflow(page)).toBe(false)
 })
 
-test('authenticated My Life Pulse supports save and alert actions', async ({ page }) => {
+test('authenticated My Ariva Pulse supports save and alert actions', async ({ page }) => {
   test.skip(!process.env.LIFE_E2E_AUTH_TOKEN, 'Set LIFE_E2E_AUTH_TOKEN and VITE_LIFE_TEST_AUTH_TOKEN for authenticated smoke.')
 
   await page.goto('/?locale=en')
-  await expect(page.getByRole('heading', { name: 'My Life Pulse' })).toBeVisible({ timeout: 15000 })
+  await expect(page.getByRole('heading', { name: 'My Ariva Pulse' })).toBeVisible({ timeout: 15000 })
   await page.getByRole('button', { name: /Save filters/i }).click()
 
-  await page.getByRole('button', { name: /Intelligence/i }).click()
-  await expect(page.getByRole('heading', { name: 'Intelligence' })).toBeVisible()
+  await page.getByRole('button', { name: /Signals/i }).click()
+  await expect(page.getByRole('heading', { name: 'Signals' })).toBeVisible()
   await page.getByRole('button', { name: 'Save' }).first().click()
   await page.getByRole('button', { name: 'Alert' }).first().click()
 

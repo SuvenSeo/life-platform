@@ -4,6 +4,7 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 
 import { AtlasBackdrop } from '../components/AtlasBackdrop'
 import { AtlasPanel } from '../components/AtlasPanel'
+import { BrandMark } from '../components/BrandMark'
 import { MetricTile } from '../components/MetricTile'
 import { SourcePill } from '../components/SourcePill'
 import { domainLabel, profileLabel, statusLabel, t } from '../i18n'
@@ -77,16 +78,26 @@ export function HomePage({
         <div className="relative grid gap-5 p-5 md:p-7 xl:grid-cols-[1.1fr_0.9fr]">
           <div className="flex min-h-[31rem] flex-col justify-between">
             <div>
+              <div className="mb-5 flex flex-wrap items-center gap-3">
+                <BrandMark />
+                <div>
+                  <p className="text-3xl font-black leading-none tracking-normal text-paper">{t(locale, 'brandName')}</p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-gold">{t(locale, 'livingAtlas')}</p>
+                </div>
+              </div>
               <div className="mb-5 flex flex-wrap gap-2">
                 <span className="atlas-chip">{t(locale, 'publicOnly')}</span>
                 <span className="atlas-chip">{t(locale, 'noAccounts')}</span>
               </div>
               <h1 className="max-w-4xl text-4xl font-semibold leading-[1.02] tracking-normal md:text-6xl">
-                {t(locale, 'livingAtlas')}
+                {t(locale, 'heroTitle')}
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-7 text-paper/74">
                 {t(locale, 'platformPromise')}
               </p>
+              <div className="mt-7 max-w-2xl">
+                <div className="signal-ribbon" aria-hidden="true" />
+              </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
@@ -119,7 +130,7 @@ export function HomePage({
             <MetricTile
               icon={WalletCards}
               label={t(locale, 'dailyTotal')}
-                note={`${district} / ${profileLabel(locale, profile)} / ${formatDate(costCommand?.generated_at ?? overview.generated_at)}`}
+              note={`${district} / ${profileLabel(locale, profile)} / ${formatDate(costCommand?.generated_at ?? overview.generated_at)}`}
               tone="gold"
               value={formatLkrLocale(costCommand?.daily_lkr ?? overview.affordability.total_monthly_lkr / 30.4, locale === 'en' ? 'en-LK' : locale)}
             />
@@ -151,7 +162,7 @@ export function HomePage({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="atlas-label">Optional account</p>
-                <h2 className="mt-1 text-2xl font-semibold text-ink">My Life Pulse</h2>
+                <h2 className="mt-1 text-2xl font-semibold text-ink">My Ariva Pulse</h2>
                 <p className="mt-2 text-sm leading-6 text-muted">
                   {lifePulse.profile.district} / {profileLabel(locale, lifePulse.profile.profile)} / {lifePulse.profile.default_locale.toUpperCase()}
                 </p>
@@ -222,7 +233,7 @@ export function HomePage({
                 ))
               ) : (
                 <p className="rounded-lg border border-line bg-white/70 p-4 text-sm leading-6 text-muted">
-                  No account alerts yet. Save a source or add a watch from Intelligence to start building your private pulse.
+                  No account alerts yet. Save a source or add a watch from Signals to start building your private pulse.
                 </p>
               )}
             </div>

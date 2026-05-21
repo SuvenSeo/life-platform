@@ -41,5 +41,7 @@ export function getFirebaseRuntime(): FirebaseRuntime | null {
 }
 
 export function testAuthToken() {
-  return import.meta.env.VITE_LIFE_TEST_AUTH_TOKEN || (globalThis as { __LIFELK_TEST_AUTH_TOKEN__?: string }).__LIFELK_TEST_AUTH_TOKEN__ || null
+  const globalToken = (globalThis as { __ARIVA_TEST_AUTH_TOKEN__?: string; __LIFELK_TEST_AUTH_TOKEN__?: string }).__ARIVA_TEST_AUTH_TOKEN__
+    || (globalThis as { __LIFELK_TEST_AUTH_TOKEN__?: string }).__LIFELK_TEST_AUTH_TOKEN__
+  return import.meta.env.VITE_LIFE_TEST_AUTH_TOKEN || globalToken || null
 }

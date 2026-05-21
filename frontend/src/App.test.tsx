@@ -225,11 +225,11 @@ describe('LifeLK Living Atlas', () => {
 
   it('renders the Living Atlas home and trilingual controls', async () => {
     render(<App />)
-    expect(await screen.findByRole('heading', { name: 'Sri Lanka Living Atlas' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Cost OS/i })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Know how Sri Lanka lives, costs, and moves.' })).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: /Cost Desk/i }).length).toBeGreaterThan(0)
 
     fireEvent.change(screen.getByRole('combobox', { name: 'Language' }), { target: { value: 'si' } })
-    expect(await screen.findByRole('heading', { name: 'ශ්‍රී ලංකා ජීවන සිතියම' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'ශ්‍රී ලංකාව ජීවත්වන, වියදම් කරන, ගමන් කරන ආකාරය දැනගන්න.' })).toBeInTheDocument()
   })
 
   it('searches the central Life API and opens the intelligence result surface', async () => {
@@ -245,11 +245,11 @@ describe('LifeLK Living Atlas', () => {
     expect(Object.keys(translations.ta).sort()).toEqual(englishKeys)
   })
 
-  it('renders logged-in My Life Pulse and account actions with test auth', async () => {
+  it('renders logged-in My Ariva Pulse and account actions with test auth', async () => {
     ;(globalThis as { __LIFELK_TEST_AUTH_TOKEN__?: string }).__LIFELK_TEST_AUTH_TOKEN__ = 'life-test-token'
     render(<App />)
 
-    expect(await screen.findByRole('heading', { name: 'My Life Pulse' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'My Ariva Pulse' })).toBeInTheDocument()
     expect(screen.getByText('Rice watch')).toBeInTheDocument()
     expect(screen.getByText('Fuel watch')).toBeInTheDocument()
 
@@ -258,7 +258,7 @@ describe('LifeLK Living Atlas', () => {
       expect(fetch).toHaveBeenCalledWith(expect.stringContaining('/me/profile'), expect.objectContaining({ method: 'PUT' }))
     })
 
-    fireEvent.click(screen.getByRole('button', { name: /Intelligence/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Signals/i }))
     const saveButtons = await screen.findAllByRole('button', { name: /Save/i })
     fireEvent.click(saveButtons[0])
     await waitFor(() => {

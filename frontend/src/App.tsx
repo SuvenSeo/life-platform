@@ -210,10 +210,10 @@ function AppContent() {
         <div className="mb-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
           <div>
-            <p className="font-semibold">Life API is not reachable from the browser.</p>
+            <p className="font-semibold">Ariva API is not reachable from the browser.</p>
             <p className="mt-1 text-sm leading-6">
               Start the FastAPI backend or set <code className="rounded bg-white px-1 py-0.5">VITE_API_URL</code> to the deployed
-              backend. The dashboard is built to recover as soon as the API responds.
+              backend. Ariva is built to recover as soon as the API responds.
             </p>
           </div>
         </div>
