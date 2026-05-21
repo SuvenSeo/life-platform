@@ -18,3 +18,5 @@ backend/life_platform.db
 *.log
 playwright-report/
 test-results/
+
+.vercel
