@@ -13,6 +13,7 @@ __pycache__/
 coverage/
 htmlcov/
 frontend/.vite/
+frontend/.vercel/
 backend/life_platform.db
 *.log
 playwright-report/
