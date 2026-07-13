@@ -48,7 +48,7 @@ async function request<T>(
       signal: init.signal ?? controller.signal,
     })
     if (!response.ok) {
-      throw new Error(`Ariva API ${response.status}: ${response.statusText}`)
+      throw new Error(`Ariva API ${response.status}: ${await errorDetail(response)}`)
     }
     if (response.status === 204) return undefined as T
     return response.json() as Promise<T>
@@ -60,6 +60,17 @@ async function request<T>(
   } finally {
     globalThis.clearTimeout(timeoutId)
   }
+}
+
+async function errorDetail(response: Response): Promise<string> {
+  try {
+    const payload = (await response.clone().json()) as { detail?: unknown; message?: unknown }
+    const detail = payload.detail ?? payload.message
+    if (typeof detail === 'string' && detail.trim()) return detail
+  } catch {
+    // Fall back to status text below when the server did not return JSON.
+  }
+  return response.statusText || 'Request failed'
 }
 
 export function getOverview(district = 'Sri Lanka', profile: Profile = 'family') {
