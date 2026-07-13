@@ -29,6 +29,23 @@ describe('API client', () => {
     await expect(request).rejects.toThrow('Ariva API timeout after 15000ms')
   })
 
+  it('surfaces JSON error detail from the backend', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ detail: 'Rate limit exceeded' }), {
+            headers: { 'Content-Type': 'application/json' },
+            status: 429,
+            statusText: 'Too Many Requests',
+          }),
+        ),
+      ),
+    )
+
+    await expect(getOverview()).rejects.toThrow('Ariva API 429: Rate limit exceeded')
+  })
+
   it('adds bearer tokens for authenticated account requests', async () => {
     vi.stubGlobal(
       'fetch',
