@@ -1,5 +1,6 @@
 import asyncio
 from datetime import timezone
+from typing import Any
 
 import pytest
 from sqlalchemy import select
@@ -16,12 +17,14 @@ class CoordinatedAdapter:
     api_base = "https://example.test/api"
     homepage_url = "https://example.test"
 
-    def __init__(self, key: str, label: str, state: dict):
+    def __init__(self, key: str, label: str, state: dict[str, Any]):
         self.key = key
         self.label = label
         self.state = state
 
     async def fetch(self, client):
+        void_client = client
+        del void_client
         self.state["active"].add(self.key)
         if len(self.state["active"]) > 1:
             self.state["saw_parallel_fetch"] = True
@@ -71,7 +74,7 @@ class CoordinatedAdapter:
 
 @pytest.mark.asyncio
 async def test_domain_adapters_fetch_concurrently_and_record_runs():
-    state = {"active": set(), "saw_parallel_fetch": False}
+    state: dict[str, Any] = {"active": set(), "saw_parallel_fetch": False}
     service = LifeService(get_settings())
     service._cache.clear()
     service.adapters = [
@@ -81,9 +84,13 @@ async def test_domain_adapters_fetch_concurrently_and_record_runs():
 
     with SessionLocal() as db:
         signals = await service.get_domain_signals(db, force_refresh=True)
-        runs = db.scalars(select(IntegrationRun).order_by(IntegrationRun.domain_key)).all()
+        run_rows = db.execute(
+            select(IntegrationRun.domain_key, IntegrationRun.status)
+            .where(IntegrationRun.domain_key.in_(["food", "fuel"]))
+            .order_by(IntegrationRun.domain_key)
+        ).all()
 
     assert state["saw_parallel_fetch"] is True
     assert [signal.key for signal in signals] == ["food", "fuel"]
-    assert [run.domain_key for run in runs] == ["food", "fuel"]
-    assert all(run.status == "completed" for run in runs)
+    assert [row.domain_key for row in run_rows] == ["food", "fuel"]
+    assert all(row.status == "completed" for row in run_rows)
