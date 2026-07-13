@@ -13,14 +13,16 @@ describe('API client', () => {
     vi.useFakeTimers()
     vi.stubGlobal(
       'fetch',
-      vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
-        new Promise((_resolve, reject) => {
+      vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+        void input
+        return new Promise<never>((resolve, reject) => {
+          void resolve
           const signal = init?.signal
           if (signal) {
             signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
           }
-        }),
-      ),
+        })
+      }),
     )
 
     const request = getOverview()
@@ -49,7 +51,8 @@ describe('API client', () => {
   it('adds bearer tokens for authenticated account requests', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn((_input: RequestInfo | URL, init?: RequestInit) => {
+      vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+        void input
         const headers = new Headers(init?.headers)
         expect(headers.get('Authorization')).toBe('Bearer test-token')
         return Promise.resolve(
