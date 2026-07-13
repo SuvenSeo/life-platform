@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     life_cache_seconds: int = Field(default=180, alias="LIFE_CACHE_SECONDS")
     upstream_timeout_seconds: float = Field(default=8.0, alias="UPSTREAM_TIMEOUT_SECONDS")
 
+    rate_limit_enabled: bool = Field(default=True, alias="RATE_LIMIT_ENABLED")
+    rate_limit_requests: int = Field(default=600, alias="RATE_LIMIT_REQUESTS")
+    rate_limit_window_seconds: int = Field(default=60, alias="RATE_LIMIT_WINDOW_SECONDS")
+
     food_api_base: str = Field(default="https://food-platform-backend.fly.dev/api/v1", alias="FOOD_API_BASE")
     fuel_api_base: str = Field(default="https://octane-api.fly.dev", alias="FUEL_API_BASE")
     property_api_base: str = Field(
