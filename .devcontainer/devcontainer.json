@@ -1,0 +1,33 @@
+{
+  "name": "Ariva Life Platform",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    }
+  },
+  "postCreateCommand": "python -m venv backend/.venv && backend/.venv/bin/python -m pip install --upgrade pip && backend/.venv/bin/pip install -r backend/requirements.txt && cd frontend && npm ci",
+  "forwardPorts": [8090, 3001, 5173],
+  "portsAttributes": {
+    "8090": {
+      "label": "FastAPI backend"
+    },
+    "3001": {
+      "label": "Vite frontend CI smoke"
+    },
+    "5173": {
+      "label": "Vite frontend dev"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-playwright.playwright",
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
+}
