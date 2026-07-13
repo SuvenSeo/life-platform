@@ -10,6 +10,12 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+}
+
+
 class RequestContextMiddleware(BaseHTTPMiddleware):
     """Attach lightweight operational headers to every API response.
 
@@ -28,11 +34,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
 
         response.headers["X-Request-ID"] = request_id
         response.headers["X-Process-Time-Ms"] = f"{elapsed_ms:.2f}"
-
-        if "X-Content-Type-Options" not in response.headers:
-            response.headers["X-Content-Type-Options"] = "nosniff"
-        if "Referrer-Policy" not in response.headers:
-            response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        apply_security_headers(response)
 
         return response
 
@@ -78,7 +80,7 @@ class InMemoryRateLimitMiddleware(BaseHTTPMiddleware):
         reset_seconds = self.window_seconds if not bucket else max(int(bucket[0] + self.window_seconds - now), 1)
 
         if len(bucket) >= self.max_requests:
-            return JSONResponse(
+            response = JSONResponse(
                 status_code=429,
                 content={
                     "detail": "Rate limit exceeded",
@@ -91,8 +93,11 @@ class InMemoryRateLimitMiddleware(BaseHTTPMiddleware):
                     "X-RateLimit-Limit": str(self.max_requests),
                     "X-RateLimit-Remaining": "0",
                     "X-RateLimit-Reset": str(reset_seconds),
+                    "X-Request-ID": request.headers.get("x-request-id") or str(uuid.uuid4()),
                 },
             )
+            apply_security_headers(response)
+            return response
 
         bucket.append(now)
         response = await call_next(request)
@@ -110,3 +115,9 @@ class InMemoryRateLimitMiddleware(BaseHTTPMiddleware):
         else:
             client = "unknown"
         return f"{client}:{request.url.path}"
+
+
+def apply_security_headers(response: Response) -> None:
+    for header, value in SECURITY_HEADERS.items():
+        if header not in response.headers:
+            response.headers[header] = value
