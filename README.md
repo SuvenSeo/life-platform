@@ -102,3 +102,4 @@ Ariva is live-powered, not fake streaming. It calls the upstream domain APIs wit
 - `docs/architecture.md` - product and technical architecture.
 - `docs/source-roadmap.md` - official source expansion and limitations.
 - `docs/verification.md` - local and production smoke checks.
+- `docs/production-readiness.md` - deployment, security, and release checklist.
