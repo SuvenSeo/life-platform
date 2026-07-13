@@ -99,8 +99,11 @@ Ariva is live-powered, not fake streaming. It calls the upstream domain APIs wit
 
 ## Docs
 
+- `AGENTS.md` - agent instructions for AI-assisted implementation sessions.
+- `docs/ai-worklog.md` - current AI work state, branch context, and resume notes.
 - `docs/architecture.md` - product and technical architecture.
 - `docs/developer-workflow.md` - local setup, long-session loop, and PR discipline.
+- `docs/engineering-backlog.md` - prioritized implementation backlog.
 - `docs/source-roadmap.md` - official source expansion and limitations.
 - `docs/verification.md` - local and production smoke checks.
 - `docs/production-readiness.md` - deployment, security, and release checklist.
