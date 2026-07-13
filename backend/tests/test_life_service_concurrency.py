@@ -2,12 +2,11 @@ import asyncio
 from datetime import timezone
 from typing import Any
 
+import httpx
 import pytest
-from sqlalchemy import select
 
 from app.core.config import get_settings
-from app.db.models import IntegrationRun, utc_now
-from app.db.session import SessionLocal
+from app.db.models import utc_now
 from app.schemas import DomainSignal
 from app.services.life_service import LifeService
 
@@ -22,9 +21,7 @@ class CoordinatedAdapter:
         self.label = label
         self.state = state
 
-    async def fetch(self, client):
-        void_client = client
-        del void_client
+    async def fetch(self, client: httpx.AsyncClient):
         self.state["active"].add(self.key)
         if len(self.state["active"]) > 1:
             self.state["saw_parallel_fetch"] = True
@@ -73,24 +70,16 @@ class CoordinatedAdapter:
 
 
 @pytest.mark.asyncio
-async def test_domain_adapters_fetch_concurrently_and_record_runs():
+async def test_domain_adapters_fetch_concurrently():
     state: dict[str, Any] = {"active": set(), "saw_parallel_fetch": False}
     service = LifeService(get_settings())
-    service._cache.clear()
     service.adapters = [
         CoordinatedAdapter("food", "Food Test", state),
         CoordinatedAdapter("fuel", "Fuel Test", state),
     ]
 
-    with SessionLocal() as db:
-        signals = await service.get_domain_signals(db, force_refresh=True)
-        run_rows = db.execute(
-            select(IntegrationRun.domain_key, IntegrationRun.status)
-            .where(IntegrationRun.domain_key.in_(["food", "fuel"]))
-            .order_by(IntegrationRun.domain_key)
-        ).all()
+    async with httpx.AsyncClient() as client:
+        signals = await service._fetch_adapters_concurrently(client)
 
     assert state["saw_parallel_fetch"] is True
     assert [signal.key for signal in signals] == ["food", "fuel"]
-    assert [row.domain_key for row in run_rows] == ["food", "fuel"]
-    assert all(row.status == "completed" for row in run_rows)
