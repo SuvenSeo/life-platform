@@ -44,7 +44,8 @@ describe('API client', () => {
   it('adds bearer tokens for authenticated account requests', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn((_: unknown, init?: RequestInit) => {
+      vi.fn((...args: Parameters<typeof fetch>) => {
+        const init = args[1]
         const headers = new Headers(init?.headers)
         expect(headers.get('Authorization')).toBe('Bearer test-token')
         return Promise.resolve(
