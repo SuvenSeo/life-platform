@@ -20,7 +20,7 @@ def test_rate_limiter_returns_429_after_limit():
 
     with TestClient(app) as client:
         first = client.get("/api/ping")
-        second = client.get("/api/ping")
+        second = client.get("/api/ping", headers={"X-Request-ID": "rate-limit-test"})
 
     assert first.status_code == 200
     assert first.headers["X-RateLimit-Limit"] == "1"
@@ -28,6 +28,9 @@ def test_rate_limiter_returns_429_after_limit():
     assert second.status_code == 429
     assert second.json()["detail"] == "Rate limit exceeded"
     assert second.headers["Retry-After"]
+    assert second.headers["X-Request-ID"] == "rate-limit-test"
+    assert second.headers["X-Content-Type-Options"] == "nosniff"
+    assert second.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
 
 
 def test_rate_limiter_ignores_non_matching_paths():
