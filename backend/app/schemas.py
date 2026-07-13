@@ -280,6 +280,14 @@ class SavedItemCreate(BaseModel):
     href: str | None = Field(default=None, max_length=512)
     payload: dict = Field(default_factory=dict)
 
+    @model_validator(mode="after")
+    def href_must_be_internal(self):
+        if self.href is None:
+            return self
+        if not self.href.startswith("/") or self.href.startswith("//"):
+            raise ValueError("href must be an internal Ariva path")
+        return self
+
 
 class SavedItemResponse(BaseModel):
     id: int

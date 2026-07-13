@@ -6,10 +6,18 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   backend:
     name: Backend
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: backend
@@ -18,14 +26,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
       - name: Install dependencies
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Test API
-        run: pytest
+        run: |
+          set -o pipefail
+          pytest -q 2>&1 | tee pytest.log
+      - name: Upload backend failure log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-pytest-log
+          path: backend/pytest.log
+          if-no-files-found: ignore
 
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: frontend
@@ -39,7 +59,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Lint
-        run: npm run lint
+        run: |
+          set -o pipefail
+          npm run lint 2>&1 | tee lint.log
+      - name: Upload frontend lint failure log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-lint-log
+          path: frontend/lint.log
+          if-no-files-found: ignore
       - name: Test
         run: npm run test
       - name: Build
@@ -48,11 +77,14 @@ jobs:
   e2e:
     name: Playwright smoke
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -86,6 +118,7 @@ jobs:
         working-directory: frontend
         env:
           VITE_API_URL: http://127.0.0.1:8090/api/v1
+          VITE_API_TIMEOUT_MS: "15000"
           VITE_LIFE_TEST_AUTH_TOKEN: life-test-token
         run: |
           nohup npm run dev -- --host 127.0.0.1 --port 3001 > ../frontend.log 2>&1 &

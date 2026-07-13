@@ -25,6 +25,9 @@ import type {
 } from '../types'
 
 const API_BASE = (import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8090/api/v1').replace(/\/$/, '')
+const DEFAULT_API_TIMEOUT_MS = 15_000
+const configuredTimeout = Number.parseInt(import.meta.env.VITE_API_TIMEOUT_MS ?? String(DEFAULT_API_TIMEOUT_MS), 10)
+const API_TIMEOUT_MS = Number.isFinite(configuredTimeout) && configuredTimeout > 0 ? configuredTimeout : DEFAULT_API_TIMEOUT_MS
 
 async function request<T>(
   path: string,
@@ -34,12 +37,40 @@ async function request<T>(
   const requestHeaders = new Headers(headers)
   if (authToken) requestHeaders.set('Authorization', `Bearer ${authToken}`)
   if (init.body && !requestHeaders.has('Content-Type')) requestHeaders.set('Content-Type', 'application/json')
-  const response = await fetch(`${API_BASE}${path}`, { ...init, headers: requestHeaders })
-  if (!response.ok) {
-    throw new Error(`Ariva API ${response.status}: ${response.statusText}`)
+
+  const controller = new AbortController()
+  const timeoutId = globalThis.setTimeout(() => controller.abort(), API_TIMEOUT_MS)
+
+  try {
+    const response = await fetch(`${API_BASE}${path}`, {
+      ...init,
+      headers: requestHeaders,
+      signal: init.signal ?? controller.signal,
+    })
+    if (!response.ok) {
+      throw new Error(`Ariva API ${response.status}: ${await errorDetail(response)}`)
+    }
+    if (response.status === 204) return undefined as T
+    return response.json() as Promise<T>
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new Error(`Ariva API timeout after ${API_TIMEOUT_MS}ms`)
+    }
+    throw error
+  } finally {
+    globalThis.clearTimeout(timeoutId)
   }
-  if (response.status === 204) return undefined as T
-  return response.json() as Promise<T>
+}
+
+async function errorDetail(response: Response): Promise<string> {
+  try {
+    const payload = (await response.clone().json()) as { detail?: unknown; message?: unknown }
+    const detail = payload.detail ?? payload.message
+    if (typeof detail === 'string' && detail.trim()) return detail
+  } catch {
+    // Fall back to status text below when the server did not return JSON.
+  }
+  return response.statusText || 'Request failed'
 }
 
 export function getOverview(district = 'Sri Lanka', profile: Profile = 'family') {

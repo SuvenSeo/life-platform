@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
 from app.core.config import get_settings
+from app.core.middleware import InMemoryRateLimitMiddleware, RequestContextMiddleware
 from app.db.base import Base
 from app.db.session import engine
 
@@ -24,6 +25,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(RequestContextMiddleware)
+app.add_middleware(
+    InMemoryRateLimitMiddleware,
+    enabled=settings.rate_limit_enabled,
+    max_requests=settings.rate_limit_requests,
+    window_seconds=settings.rate_limit_window_seconds,
+    path_predicate=lambda path: path.startswith(settings.api_prefix),
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_list,

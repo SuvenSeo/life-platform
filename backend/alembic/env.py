@@ -5,7 +5,22 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.config import get_settings
 from app.db.base import Base
-from app.db.models import Domain, DomainSnapshot, IntegrationRun, LifeIndexSnapshot
+from app.db.models import (  # noqa: F401
+    AlertRule,
+    AreaScoreSnapshot,
+    Domain,
+    DomainSnapshot,
+    IntegrationRun,
+    LifeIndexSnapshot,
+    Notification,
+    PublicInsightSnapshot,
+    RetailOfferSnapshot,
+    SavedItem,
+    SourceRegistry,
+    TariffSnapshot,
+    TransportFareSnapshot,
+    UserProfile,
+)
 
 config = context.config
 if config.config_file_name is not None:

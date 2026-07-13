@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import asyncio
 from datetime import datetime, timedelta, timezone
 from typing import Any, Iterable
 
@@ -259,21 +262,42 @@ class LifeService:
 
         await self.ensure_domains(db)
         self.ensure_sources(db)
+        runs = self._start_integration_runs(db)
         timeout = httpx.Timeout(self.settings.upstream_timeout_seconds)
         async with httpx.AsyncClient(timeout=timeout, follow_redirects=True) as client:
-            signals = [await self._fetch_adapter(adapter, client, db) for adapter in self.adapters]
+            signals = await self._fetch_adapters_concurrently(client)
 
+        self._finish_integration_runs(db, runs, signals)
         self._cache[cache_key] = (now, signals)
         self.store_domain_snapshots(db, signals)
         return signals
 
-    async def _fetch_adapter(self, adapter, client: httpx.AsyncClient, db: Session) -> DomainSignal:
-        run = IntegrationRun(domain_key=adapter.key, status="running")
-        db.add(run)
+    def _start_integration_runs(self, db: Session) -> dict[str, IntegrationRun]:
+        runs: dict[str, IntegrationRun] = {}
+        for adapter in self.adapters:
+            run = IntegrationRun(domain_key=adapter.key, status="running")
+            db.add(run)
+            runs[adapter.key] = run
         db.commit()
-        db.refresh(run)
+        for run in runs.values():
+            db.refresh(run)
+        return runs
+
+    async def _fetch_adapters_concurrently(self, client: httpx.AsyncClient) -> list[DomainSignal]:
+        tasks = [self._fetch_adapter_signal(adapter, client) for adapter in self.adapters]
+        return await asyncio.gather(*tasks)
+
+    async def _fetch_adapter_signal(self, adapter, client: httpx.AsyncClient) -> DomainSignal:
         try:
-            signal = await adapter.fetch(client)
+            return await adapter.fetch(client)
+        except Exception as exc:
+            return adapter.degraded_fixture(str(exc))
+
+    def _finish_integration_runs(self, db: Session, runs: dict[str, IntegrationRun], signals: Iterable[DomainSignal]) -> None:
+        for signal in signals:
+            run = runs.get(signal.key)
+            if run is None:
+                continue
             run.status = "completed" if signal.status != "offline" else "failed"
             run.finished_at = utc_now()
             run.payload_summary = {
@@ -282,14 +306,19 @@ class LifeService:
                 "metrics_count": len(signal.metrics),
                 "errors": signal.errors,
             }
-            db.commit()
-            return signal
-        except Exception as exc:
-            run.status = "failed"
-            run.finished_at = utc_now()
-            run.error_message = str(exc)
-            db.commit()
-            return adapter.degraded_fixture(str(exc))
+            if signal.errors:
+                run.error_message = "; ".join(signal.errors[:3])
+        db.commit()
+
+    async def _fetch_adapter(self, adapter, client: httpx.AsyncClient, db: Session) -> DomainSignal:
+        """Backward-compatible single-adapter fetch path used by older tests/tools."""
+        run = IntegrationRun(domain_key=adapter.key, status="running")
+        db.add(run)
+        db.commit()
+        db.refresh(run)
+        signal = await self._fetch_adapter_signal(adapter, client)
+        self._finish_integration_runs(db, {adapter.key: run}, [signal])
+        return signal
 
     async def ensure_domains(self, db: Session) -> None:
         changed = False
@@ -899,123 +928,98 @@ class LifeService:
                 "district": item.district,
                 "score": item.score,
                 "grade": item.grade,
-                "rent": next(component.score for component in item.components if component.key == "rent"),
-                "food": next(component.score for component in item.components if component.key == "food"),
-                "transport": next(component.score for component in item.components if component.key == "transport"),
+                "components": {component.key: component.score for component in item.components},
             }
             for item in district_scores
         ]
-        national = next((item.score for item in district_scores if item.district == "Sri Lanka"), selected.score)
         return AtlasResponse(
             generated_at=utc_now(),
             locale=locale,
             district=district,
-            profile=profile if profile in PROFILE_FACTORS else "family",
-            national_score=national,
+            profile=profile,
+            national_score=next((item.score for item in district_scores if item.district == "Sri Lanka"), selected.score),
             selected=selected,
             district_scores=district_scores,
             heatmap=heatmap,
-            narrative=atlas_narrative(locale, district, selected.score, profile),
-            sources=self.public_sources(),
+            narrative=atlas_narrative(locale, selected.district, selected.score, profile),
+            sources=self.public_sources("areas") + self.public_sources("indices"),
         )
 
     async def insights(self, db: Session, *, domain: str | None = None) -> InsightsResponse:
         domains = await self.get_domain_signals(db)
         now = utc_now()
-        source_map = {source.key: source for source in self.public_sources()}
-        rows = [
-            PublicInsight(
-                id="cost-non-food-pressure",
-                domain="indices",
-                title="Non-food costs are the bigger monthly load",
-                message="HIES context shows the household basket is broader than food, so utilities, transport, health, education, and household goods are first-class Ariva inputs.",
-                severity="watch",
-                confidence="high",
-                source_keys=["dcs-hies"],
-                observed_at=now,
-            ),
-            PublicInsight(
-                id="food-substitution",
-                domain="food",
-                title="Food basket needs substitutions, not just cheapest sorting",
-                message="Retail and market quote comparison should highlight reasonable substitutes when staples move quickly.",
-                severity="watch",
-                confidence="medium",
-                source_keys=["foodlk-platform", "cbsl-price-report", "harti-daily"],
-                observed_at=now,
-            ),
-            PublicInsight(
-                id="source-degraded-visible",
-                domain="sources",
-                title="Source confidence is part of the product",
-                message="When retail pages block access or official formats change, the domain should degrade visibly without breaking the dashboard.",
-                severity="good",
-                confidence="high",
-                source_keys=list(source_map)[:4],
-                observed_at=now,
-            ),
-        ]
-        for signal in domains:
-            if signal.status != "healthy":
-                rows.append(
+        insights: list[PublicInsight] = []
+        for item in domains:
+            if domain and item.key != domain:
+                continue
+            if item.status != "healthy":
+                insights.append(
                     PublicInsight(
-                        id=f"{signal.key}-degraded",
-                        domain=signal.key,
-                        title=f"{signal.label} needs attention",
-                        message=f"{signal.label} is currently {signal.status}; Ariva is still serving degraded public signals with visible freshness.",
-                        severity="watch",
+                        id=f"{item.key}-status-{now.date().isoformat()}",
+                        domain=item.key,
+                        title=f"{item.label} source requires attention",
+                        message=f"Current source state is {item.status}. Ariva is labelling freshness and fallback state explicitly.",
+                        severity="watch" if item.status == "degraded" else "risk",
                         confidence="medium",
-                        source_keys=[source.key for source in signal.sources] or [signal.key],
+                        source_keys=[source.key for source in item.sources] or [item.key],
                         observed_at=now,
                     )
                 )
-        filtered = [row for row in rows if domain is None or row.domain == domain]
-        for item in filtered:
+            for highlight in item.highlights[:1]:
+                insights.append(
+                    PublicInsight(
+                        id=f"{item.key}-{highlight.label.lower().replace(' ', '-')[:40]}",
+                        domain=item.key,
+                        title=highlight.label,
+                        message=highlight.value,
+                        severity=highlight.severity,
+                        confidence="medium",
+                        source_keys=[source.key for source in item.sources] or [item.key],
+                        observed_at=item.observed_at,
+                    )
+                )
+        for insight in insights:
             db.add(
                 PublicInsightSnapshot(
-                    insight_key=item.id,
-                    domain_key=item.domain,
-                    title=item.title,
-                    severity=item.severity,
-                    message=item.message,
-                    confidence=item.confidence,
-                    source_keys=item.source_keys,
-                    observed_at=item.observed_at,
+                    insight_key=insight.id,
+                    domain_key=insight.domain,
+                    title=insight.title,
+                    severity=insight.severity,
+                    message=insight.message,
+                    confidence=insight.confidence,
+                    source_keys=insight.source_keys,
+                    observed_at=insight.observed_at,
                 )
             )
         db.commit()
-        keys = {key for item in filtered for key in item.source_keys}
         return InsightsResponse(
             generated_at=now,
             domain=domain,
-            insights=filtered,
-            sources=[source for source in self.public_sources() if source.key in keys],
+            insights=insights[:30],
+            sources=self.public_sources(domain),
         )
 
     def i18n(self, *, locale: str = "en") -> I18nResponse:
-        if locale not in {"en", "si", "ta"}:
-            locale = "en"
-        source_labels = {
-            row["key"]: row.get("labels", {}).get(locale, row["label"])
-            for row in SOURCE_DEFINITIONS
-        }
+        locale = normalize_locale(locale)
         return I18nResponse(
             locale=locale,
             labels=I18N_LABELS[locale],
             domains=DOMAIN_TRANSLATIONS[locale],
-            sources=source_labels,
+            sources={row["key"]: row.get("labels", {}).get(locale, row["label"]) for row in SOURCE_DEFINITIONS},
         )
 
     def public_sources(self, domain: str | None = None) -> list[SourceReference]:
-        return source_refs(domain)
+        refs = source_refs(domain)
+        return [SourceReference(**row) for row in refs]
 
-    def _metric_value(self, domain: DomainSignal | None, label: str) -> float | None:
+    @staticmethod
+    def _metric_value(domain: DomainSignal | None, label: str) -> float | None:
         if domain is None:
             return None
         for metric in domain.metrics:
             if metric.label == label:
                 try:
-                    return float(metric.value) if metric.value is not None else None
+                    return float(metric.value)
                 except (TypeError, ValueError):
                     return None
         return None

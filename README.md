@@ -26,11 +26,21 @@ Useful local settings:
 DATABASE_URL=sqlite:///./life_platform.db
 LIFE_USE_FIXTURES=false
 LIFE_CACHE_SECONDS=180
+UPSTREAM_TIMEOUT_SECONDS=8
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_REQUESTS=600
+RATE_LIMIT_WINDOW_SECONDS=60
 FOOD_API_BASE=https://food-platform-backend.fly.dev/api/v1
 FUEL_API_BASE=https://octane-api.fly.dev
 PROPERTY_API_BASE=https://property-price-intelligence-an-ardeno-production.fly.dev
 VEHICLE_API_BASE=https://vehicle-platform-backend.fly.dev/api/v1
 ```
+
+Operational behavior:
+
+- Every API response includes an `X-Request-ID`, `X-Process-Time-Ms`, `X-Content-Type-Options`, and `Referrer-Policy` header.
+- API routes under `/api/v1` are protected by a lightweight per-process rate limiter. The default is 600 requests per path per client per 60 seconds.
+- The limiter is designed as a small-instance safety guard. Replace it with edge or Redis-backed limiting if Ariva needs strict distributed quotas.
 
 Optional hybrid-account settings:
 
@@ -56,6 +66,8 @@ npm run dev
 
 Default local frontend API base is `http://127.0.0.1:8090/api/v1`.
 When backend and frontend are both running, `npm run test:e2e` runs the desktop/mobile Playwright smoke suite.
+
+Set `VITE_API_TIMEOUT_MS` to control how long the browser waits for API responses before showing a timeout error. The default is 15000 ms.
 
 Set the `VITE_FIREBASE_*` values from the Firebase web app config to show the optional sign-in control. If they are absent, the UI remains public-only and hides account controls.
 
@@ -87,6 +99,11 @@ Ariva is live-powered, not fake streaming. It calls the upstream domain APIs wit
 
 ## Docs
 
+- `AGENTS.md` - agent instructions for AI-assisted implementation sessions.
+- `docs/ai-worklog.md` - current AI work state, branch context, and resume notes.
 - `docs/architecture.md` - product and technical architecture.
+- `docs/developer-workflow.md` - local setup, long-session loop, and PR discipline.
+- `docs/engineering-backlog.md` - prioritized implementation backlog.
 - `docs/source-roadmap.md` - official source expansion and limitations.
 - `docs/verification.md` - local and production smoke checks.
+- `docs/production-readiness.md` - deployment, security, and release checklist.
